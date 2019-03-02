@@ -73,11 +73,22 @@ export default class App extends Component<Props> {
 	    });
     };
     render() {
-      return (
-        <View>
-          <Text>Hello</Text>
-        </View>
-      );
+      return (<View style={styles.container}>
+	      <View style={styles.container}>
+              <Button
+          title="Make a payment"
+          onPress={this.requestPayment}
+//          disabled={this.state.isPaymentPending}
+              />
+	      </View>
+	      
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Welcome to hama Native!</Text>
+        <Text style={styles.instructions}>To get started, edit App.js</Text>
+        <Text style={styles.instructions}>{instructions}</Text>
+	      </View>
+	      </View>
+    );
   }
 }
 
