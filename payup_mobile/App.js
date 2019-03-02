@@ -33,10 +33,12 @@ export default class App extends Component<Props> {
 	this.saveData=this.saveData.bind(this)
     };
 
-    async saveData(token){
+    async saveData(customer){
+
 	try {
-	    await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+	    await AsyncStorage.setItem('@MySuperStore:customerid', customer.id);
 	} catch (error) {
+	    console.warn("error saving", error);
 	    // Error saving data
 	}
     };
@@ -49,12 +51,25 @@ export default class App extends Component<Props> {
 	    },
 	    method: "POST"
 	    
-	}).then(this.saveData)
+	}).then(function(response){return response.json()}).then(this.saveData);
     };
-    async handlerPayment(token){
+    async handlerPayment(){
+	var value = null;
+	try {
+	    value = await AsyncStorage.getItem('customerid');
+	    if (value !== null) {		
+//		console.warn('got id', value);
+	    }else{
+		console.warn('not got id');
+	    }
+	    
+	} catch (error) {
+	    console.warn('couldnt get id');
+	    // Error retrieving data
+	}
 
 	fetch("https://api.stripe.com/v1/charges", {
-	    body: "amount=999&currency=usd&description=Examplewithtoken&source=" + token.tokenId,
+	    body: "amount=999&currency=usd&description=chargewithcustomer&customer=" + value,
 	    headers: {
 		Authorization: "Basic c2tfdGVzdF83TDE5MUJ6ZjMxc2NtYldydUFSM2xjeng6",
 		"Content-Type": "application/x-www-form-urlencoded"
@@ -76,10 +91,13 @@ export default class App extends Component<Props> {
       return (<View style={styles.container}>
 	      <View style={styles.container}>
               <Button
-          title="Make a payment"
+          title="Make Customer ID"
           onPress={this.requestPayment}
 //          disabled={this.state.isPaymentPending}
-              />
+              />	      
+	      <Button title="Charge my card"
+	      onPress={this.handlerPayment}
+	      />
 	      </View>
 	      
       <View style={styles.container}>
