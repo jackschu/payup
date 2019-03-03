@@ -45,7 +45,8 @@ export default class GoalsPage extends Component {
 				longitudeDelta: 0.0421,
 			},
 		    date: "2019-03-03",
-		    time: new Date().toString().substr(16,5)
+			time: new Date().toString().substr(16,5),
+			utcDate: new Date().toISOString()
 
 		};
 	    this.get_friends=this.get_friends.bind(this)
@@ -57,7 +58,8 @@ export default class GoalsPage extends Component {
 
 	    this.requestLocationPermission=this.requestLocationPermission.bind(this)
 	    this.handleModalOpen=this.handleModalOpen.bind(this)
-	    this.onRegionChange=this.onRegionChange.bind(this)
+		this.onRegionChange=this.onRegionChange.bind(this)
+		this.addGoalHandler=this.addGoalHandler.bind(this)
 
 
 		// this.setState(modalVisible(false))
@@ -75,7 +77,15 @@ export default class GoalsPage extends Component {
 	db.ref('/users/' + user.uid +'/goals/'+title).update(goal
 							    )
 	console.warn('done')
-    }
+	}
+	
+	addGoalHandler() {
+		var newDate = new Date(this.state.date + " " + this.state.time).getTime();
+		console.log(newDate);
+		this.setState({modalVisible: false, utcDate: newDate});
+	 	this.send_goal();
+		this.populate_goals(firebase.auth().currentUser.uid);
+	}
 
     
     async get_email(uid){
@@ -331,8 +341,7 @@ export default class GoalsPage extends Component {
 					</Modal>
 
 					<View style={{width: "75%", marginLeft: 40, marginTop: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-								  <Button mode="contained" onPress={() => {this.setState({modalVisible: false}); this.send_goal()
-													   ;this.populate_goals(firebase.auth().currentUser.uid)}}>
+								  <Button mode="contained" onPress={this.addGoalHandler}>
 							Add Goal
 						</Button>
 
