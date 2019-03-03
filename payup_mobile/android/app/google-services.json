@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "603784507143",
+    "firebase_url": "https://payup-77032.firebaseio.com",
+    "project_id": "payup-77032",
+    "storage_bucket": "payup-77032.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603784507143:android:69242ebfe83cc77b",
+        "android_client_info": {
+          "package_name": "com.payup_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603784507143-8ffk6ushpa4nqbi5vcd5f40pla9lu5p8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7nldMB0fepJ-V2M9Au26_WW4K2ccbj_I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
