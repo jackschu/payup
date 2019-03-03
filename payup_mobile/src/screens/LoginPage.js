@@ -16,9 +16,11 @@ handleSignUp = (email, password) => {
 	    db.ref('/emailToUid/'+fireemail).set({
 		uid:user.uid
 	    })
-	    console.warn('loggedin', user.uid)}
-	     )
-    
+	    console.warn('loggedin', user.uid)
+	      db.ref('users/' + user.uid).set({
+		  email: fireemail
+	      })
+	})    
 	.catch(function(error) {
 	// Handle Errors here.
 	var errorCode = error.code;
@@ -26,7 +28,11 @@ handleSignUp = (email, password) => {
 	console.warn("error creating user", errorMessage)
     });
     firebase.auth().signInWithEmailAndPassword(email, password)
-	.then(()=>{console.warn('signed in user', firebase.auth().currentUser)})
+	.then(()=>{console.warn('signed in user', firebase.auth().currentUser)
+		   db.ref('users/' + firebase.auth().currentUser.uid).set({
+		       email: email
+		   })
+		  })
 	.catch(function(error) {
 	// Handle Errors here.
 	var errorCode = error.code;

@@ -1,3 +1,7 @@
+import firebase from '@firebase/app'
+import '@firebase/auth'
+import '@firebase/database'
+import { db } from '../config';
 import React, {Component} from 'react';
 import {StyleSheet, View, Modal} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, FAB, Portal, Text, TextInput, Chip} from 'react-native-paper';
@@ -13,6 +17,21 @@ export default class GoalsPage extends Component {
 
 		// this.setState(modalVisible(false))
 	}
+    componentDidMount(){
+	db.ref("users/"  + user.uid).once('value').then(function(snapshot){
+	    //		console.warn('value',snapshot.val())
+	    friendslist = Object.keys(snapshot.val()['friends'])
+	    console.warn('list', friendslist)
+	    this.setState({
+		
+		friends:['testing' , 'some']
+	    })
+	    console.warn('stripe boi',customer)
+	
+	});
+
+    }
+    
     render() {
 		return (
 			<View style={{flex: 1}}>
