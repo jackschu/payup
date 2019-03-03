@@ -92,6 +92,9 @@ export default class Home extends Component {
 	      <Button title="Charge my card"
 	      onPress={this.handlerPayment}
 	      />
+		  <Button title="My Goals"
+	      onPress={()=>this.props.navigation.navigate('GoalsPage')}
+	      />
 	      <Button title="Add a friend"
 	  onPress={()=>this.props.navigation.navigate('AddFriend')}
 	      />
