@@ -60,6 +60,7 @@ export default class GoalsPage extends Component {
 	    this.handleModalOpen=this.handleModalOpen.bind(this)
 		this.onRegionChange=this.onRegionChange.bind(this)
 		this.addGoalHandler=this.addGoalHandler.bind(this)
+		this.doThing=this.doThing.bind(this)
 
 
 		// this.setState(modalVisible(false))
@@ -67,8 +68,7 @@ export default class GoalsPage extends Component {
     async send_goal(){
 	var user = firebase.auth().currentUser;
 	goal = {}
-	var title = this.state.text
-	goal['utc'] = this.state.utcDate
+	var title = this.state.text	
 	goal['desc'] = this.state.desc
 	goal['lat'] = this.state.markerCoordinates.latitude
 	goal['lon'] = this.state.markerCoordinates.longitude	
@@ -81,10 +81,14 @@ export default class GoalsPage extends Component {
 	}
 	
 	addGoalHandler() {
-		this.setState({modalVisible: false});
-	 	this.send_goal();
-	    this.populate_goals(firebase.auth().currentUser.uid);
-	    
+		var newDate = new Date(this.state.date + " " + this.state.time).getTime();
+		console.log(newDate);
+		this.setState({modalVisible: false, utcDate: newDate}, this.doThing);
+	}
+
+	doThing() {
+		this.send_goal();
+		this.populate_goals(firebase.auth().currentUser.uid);	
 	}
 
     
@@ -133,7 +137,6 @@ export default class GoalsPage extends Component {
 	var new_goals= []
 	for (var title in goals_list){
 	    var goal = {}
-	    goal['utc'] = goals_list[title]['utc']
 	    goal['lat'] = goals_list[title]['lat']	
 	    goal['lon'] = goals_list[title]['lon']    
 	    goal['title'] = title
@@ -224,7 +227,7 @@ export default class GoalsPage extends Component {
 		return (
 			<View style={{flex: 1}}>
 
-		    	<ScrollView>
+
 			{this.state.goals.map((goal)=>
 			 (<Card style={cardStyle.cardStyle}>
 			  <Card.Title title={goal.title} subtitle={'Betting ' +goal.amount+ 'USD against '+ goal.friends} left={(props) => <Avatar.Icon {...props} icon="account-circle" />} />
@@ -236,12 +239,10 @@ export default class GoalsPage extends Component {
 			  <Paragraph> {'Penalty for not succeeding ' +goal.amount+"USD"} </Paragraph>
 					</Card.Content>
 					<Card.Actions>
-					<Button></Button>
+					<Button>Edit</Button>
 					</Card.Actions>
 			  </Card>))
-			 
 			}
-		    	</ScrollView>
 				<Modal style={modalStyle.parent} animated={true} visible={this.state.modalVisible} onRequestClose={() => this.setState({ modalVisible: false })}>
 					<ScrollView>
 					<Text style={modalStyle.title}> New Goal </Text>
@@ -304,10 +305,7 @@ export default class GoalsPage extends Component {
 							maxDate="2018-12-31"
 							confirmBtnText="Confirm"
 							cancelBtnText="Cancel"
-							onDateChange={(date) => {
-								var newDate = new Date(date + " " + this.state.time).getTime();
-								this.setState({date: date, utcDate: newDate})
-							}}
+							onDateChange={(date) => {this.setState({date: date})}}
 						/>
 
 						<DatePicker
@@ -318,10 +316,7 @@ export default class GoalsPage extends Component {
 							confirmBtnText="Confirm"
 							cancelBtnText="Cancel"
 							minuteInterval={1}
-							onDateChange={(time) => {
-								var newDate = new Date(this.state.date + " " + time).getTime();
-								this.setState({time: time, utcDate: newDate});
-							}}
+							onDateChange={(time) => {this.setState({time: time});}}
 						/>
 					</View>
 
