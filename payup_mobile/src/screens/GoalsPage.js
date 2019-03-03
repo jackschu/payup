@@ -226,7 +226,7 @@ export default class GoalsPage extends Component {
 		return (
 			<View style={{flex: 1}}>
 
-
+		    	<ScrollView>
 			{this.state.goals.map((goal)=>
 			 (<Card style={cardStyle.cardStyle}>
 			  <Card.Title title={goal.title} subtitle={'Betting ' +goal.amount+ 'USD against '+ goal.friends} left={(props) => <Avatar.Icon {...props} icon="account-circle" />} />
@@ -238,10 +238,12 @@ export default class GoalsPage extends Component {
 			  <Paragraph> {'Penalty for not succeeding ' +goal.amount+"USD"} </Paragraph>
 					</Card.Content>
 					<Card.Actions>
-					<Button>Edit</Button>
+					<Button></Button>
 					</Card.Actions>
 			  </Card>))
+			 
 			}
+		    	</ScrollView>
 				<Modal style={modalStyle.parent} animated={true} visible={this.state.modalVisible} onRequestClose={() => this.setState({ modalVisible: false })}>
 					<ScrollView>
 					<Text style={modalStyle.title}> New Goal </Text>
