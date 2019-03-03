@@ -104,6 +104,7 @@ export default class GoalsPage extends Component {
 	var title = this.state.text
 	goal['done'] = false
 	goal['utc'] = this.state.utcDate
+//	console.warn('utc',goal['utc'])
 	goal['desc'] = this.state.desc
 	goal['lat'] = this.state.markerCoordinates.latitude
 	goal['lon'] = this.state.markerCoordinates.longitude	
@@ -115,9 +116,10 @@ export default class GoalsPage extends Component {
 	console.warn('done')
 	}
 	
-	addGoalHandler() {
+    addGoalHandler() {
+//	console.warn('hahnewdate',this.state.date, this.state.time);
 		var newDate = new Date(this.state.date + " " + this.state.time).getTime();
-		console.log(newDate);
+
 		this.setState({modalVisible: false, utcDate: newDate}, this.doThing);
 	}
 
