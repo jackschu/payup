@@ -1,6 +1,16 @@
+import firebase from '@firebase/app'
+import '@firebase/auth'
+import '@firebase/database'
+import { db } from '../config';
 import React, {Component} from 'react';
 import {StyleSheet, View, Modal} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, FAB, Portal, Text, TextInput, Chip} from 'react-native-paper';
+
+function getUser(currentID, currentValue) {
+    return firebase.database().ref('/users/' + currentID).once('value').then(function(child) {
+        console.log("The current ID is: "+currentID+" and the current value is: "+currentValue);
+    });
+}
 
 export default class GoalsPage extends Component {
 	constructor(props) {
@@ -10,9 +20,53 @@ export default class GoalsPage extends Component {
 			friends: ["Hunter", "Spencer", "Jack"],
 			selectedFriends: []
 		};
+	    this.get_friends=this.get_friends.bind(this)
+	    this.populate_email=this.populate_email.bind(this)	    
+	    this.get_email=this.get_email.bind(this)
 
 		// this.setState(modalVisible(false))
 	}
+    async get_email(uid){
+	var snapshot = await db.ref("users/"  + uid).once('value')
+	console.warn('get email',snapshot.val())
+	return snapshot.val()['email']
+    }
+    async get_friends(uid){
+	var firendslist
+	var snapshot = await db.ref("users/"  + uid+"/friends/").once('value')
+	var val = snapshot.val()
+	console.warn('get friends',val)
+	try{
+	    friendslist = Object.keys(val)
+	}catch(e){
+	    console.warn("no friends")
+	}
+	var emaillist = await Promise.all(friendslist.map(async (uid) => {
+	    const contents = await this.get_email(uid)
+	    return contents
+	}));
+//	console.warn('email list', emaillist)
+	return emaillist
+//	    then(function(snapshot)
+    }
+
+    async populate_email(uid){
+//	var emaillist =  await this.get_friends(uid)
+//	console.warn(emaillist)
+	this.setState({
+	    friends:emaillist
+	})
+    }
+    
+    componentDidMount(){
+	var user = firebase.auth().currentUser;
+	var friendslist;
+//	console.warn('goal uid',user.uid)
+	this.populate_email(user.uid)
+
+
+    }
+    
     render() {
 		return (
 			<View style={{flex: 1}}>
