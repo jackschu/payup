@@ -65,6 +65,7 @@ export default class LoginPage extends Component {
         style={{height: 40, borderColor: 'gray', borderWidth: 1}}
         onChangeText={(pass) => this.setState({pass})}
         placeholder={'Password'}
+	secureTextEntry={true}
       />
 	  
 	  	<Button
