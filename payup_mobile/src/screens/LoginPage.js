@@ -13,11 +13,11 @@ handleSignUp = (email, password) => {
 	.then(()=>{
 	    var user = firebase.auth().currentUser;
 	    var fireemail = email.replace('.',',')
-	    db.ref('/emailToUid/'+fireemail).set({
+	    db.ref('/emailToUid/'+fireemail).update({
 		uid:user.uid
 	    })
 	    console.warn('loggedin', user.uid)
-	      db.ref('users/' + user.uid).set({
+	      db.ref('users/' + user.uid).update({
 		  email: fireemail
 	      })
 	})    
