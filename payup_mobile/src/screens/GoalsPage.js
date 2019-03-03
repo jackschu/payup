@@ -18,6 +18,7 @@ export default class GoalsPage extends Component {
 		// this.setState(modalVisible(false))
 	}
     componentDidMount(){
+	var user = firebase.auth().currentUser;
 	db.ref("users/"  + user.uid).once('value').then(function(snapshot){
 	    //		console.warn('value',snapshot.val())
 	    friendslist = Object.keys(snapshot.val()['friends'])
