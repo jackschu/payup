@@ -7,8 +7,10 @@ import {StyleSheet, View, Modal} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, FAB, Portal, Text, TextInput, Chip} from 'react-native-paper';
 import {PermissionsAndroid} from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import DatePicker from 'react-native-datepicker'
 
 import Geolocation from 'react-native-geolocation-service';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default class GoalsPage extends Component {
 	constructor(props) {
@@ -32,7 +34,9 @@ export default class GoalsPage extends Component {
 				longitude: 0,
 				latitudeDelta: 0.0922,
 				longitudeDelta: 0.0421,
-			}
+			},
+			date: "2019-03-03",
+			time: new Date().toString().substr(16,5)
 		};
 	    this.get_friends=this.get_friends.bind(this)
 	    this.populate_email=this.populate_email.bind(this)	    
@@ -156,6 +160,7 @@ export default class GoalsPage extends Component {
 					</Card.Actions>
 				</Card>
 				<Modal style={modalStyle.parent} animated={true} visible={this.state.modalVisible} onRequestClose={() => this.setState({ modalVisible: false })}>
+					<ScrollView>
 					<Text style={modalStyle.title}> New Goal </Text>
 					<Text style={modalStyle.goalTitleLabel}> Goal Title </Text>
 					<TextInput
@@ -202,10 +207,38 @@ export default class GoalsPage extends Component {
 						onChangeText={desc => this.setState({ desc })}
 					/>
 
-					<Button mode="contained" onPress={()=>{this.setState({innerModalVisible: true})}}>
-							Show Map
-					</Button>
+					<Text style={modalStyle.goalTitleLabel}> Goal Deadline </Text>
+					<View style={modalStyle.dateTimePicker}>
+						<DatePicker
+							style={{width: 200, marginBottom: 10}}
+							date={this.state.date}
+							mode="date"
+							placeholder="select date"
+							format="YYYY-MM-DD"
+							minDate="2018-03-03"
+							maxDate="2018-12-31"
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							onDateChange={(date) => {this.setState({date: date})}}
+						/>
 
+						<DatePicker
+							style={{width: 200, marginBottom: 10}}
+							date={this.state.time}
+							mode="time"
+							format="HH:mm"
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							minuteInterval={1}
+							onDateChange={(time) => {this.setState({time: time});}}
+						/>
+					</View>
+
+					<View style={{width: "75%", marginLeft: 40, marginTop: 10}}>
+						<Button mode="contained" onPress={()=>{this.setState({innerModalVisible: true})}}>
+								Choose Goal Location
+						</Button>
+					</View>
 					<Modal animated={true} visible={this.state.innerModalVisible} onRequestClose={() => this.setState({ innerModalVisible: false })}>
 					<MapView
 						provider={PROVIDER_GOOGLE} // remove if not using Google Maps
@@ -224,9 +257,16 @@ export default class GoalsPage extends Component {
 					</Button>
 					</Modal>
 
-					<Button icon="add-a-photo" mode="contained" onPress={() => this.setState({modalVisible: false})}>
-						Press me
-					</Button>
+					<View style={{width: "75%", marginLeft: 40, marginTop: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+						<Button mode="contained" onPress={() => this.setState({modalVisible: false})}>
+							Add Goal
+						</Button>
+
+						<Button mode="contained" onPress={() => this.setState({modalVisible: false})}>
+							Cancel
+						</Button>
+					</View>
+					</ScrollView>
 				</Modal>
 			</View>
 		);
@@ -260,9 +300,12 @@ const modalStyle = {
 		marginBottom: 5,
 	},
 	chipStyle: {
-		width: 100,
+		width: 250,
 		margin: 3,
 		marginLeft: 20
+	},
+	dateTimePicker: {
+		marginLeft: 40
 	}
 }
 
