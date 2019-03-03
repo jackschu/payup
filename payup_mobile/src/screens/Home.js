@@ -44,8 +44,11 @@ export default class Home extends Component {
 	var value = null;
 	try {
 	    var user = firebase.auth().currentUser;
-	    db.ref("users/"  + user.id).once('value').then(function(snapshot){
+
+	    db.ref("users/"  + user.uid).once('value').then(function(snapshot){
+//		console.warn('value',snapshot.val())
 		customer = snapshot.val()['stripe_customer']
+		console.warn('stripe boi',customer)
 		fetch("https://api.stripe.com/v1/charges", {
 		    body: "amount=999&currency=usd&description=chargewithcustomer&customer=" + customer,
 		    headers: {
@@ -53,15 +56,10 @@ export default class Home extends Component {
 			"Content-Type": "application/x-www-form-urlencoded"
 		    },
 		    method: "POST"
-		}).then().catch(error => { console.warn('handler failed', { error });})
+		}).catch(error => { console.warn('handler failed', { error });})
 	    });
 	    //value = await AsyncStorage.getItem('customerid');
 
-	    if (value !== null) {		
-		//		console.warn('got id', value);
-	    }else{
-		console.warn('not got id');
-	    }
 	    
 	} catch (error) {
 	    console.warn('couldnt get id');
