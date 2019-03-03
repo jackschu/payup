@@ -80,9 +80,7 @@ export default class GoalsPage extends Component {
 	}
 	
 	addGoalHandler() {
-		var newDate = new Date(this.state.date + " " + this.state.time).getTime();
-		console.log(newDate);
-		this.setState({modalVisible: false, utcDate: newDate});
+		this.setState({modalVisible: false});
 	 	this.send_goal();
 		this.populate_goals(firebase.auth().currentUser.uid);
 	}
@@ -301,7 +299,10 @@ export default class GoalsPage extends Component {
 							maxDate="2018-12-31"
 							confirmBtnText="Confirm"
 							cancelBtnText="Cancel"
-							onDateChange={(date) => {this.setState({date: date})}}
+							onDateChange={(date) => {
+								var newDate = new Date(date + " " + this.state.time).getTime();
+								this.setState({date: date, utcDate: newDate})
+							}}
 						/>
 
 						<DatePicker
@@ -312,7 +313,10 @@ export default class GoalsPage extends Component {
 							confirmBtnText="Confirm"
 							cancelBtnText="Cancel"
 							minuteInterval={1}
-							onDateChange={(time) => {this.setState({time: time});}}
+							onDateChange={(time) => {
+								var newDate = new Date(this.state.date + " " + time).getTime();
+								this.setState({time: time, utcDate: newDate});
+							}}
 						/>
 					</View>
 
