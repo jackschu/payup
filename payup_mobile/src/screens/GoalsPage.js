@@ -120,7 +120,7 @@ export default class GoalsPage extends Component {
 									
 									});
 								}
-								this.setState({selectedFriends: boy});
+							    this.setState({selectedFriends: boy});
 							}
 							}> {friend} </Chip>
 						))}
