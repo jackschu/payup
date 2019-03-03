@@ -15,6 +15,8 @@ import Geolocation from 'react-native-geolocation-service';
 import { ScrollView } from 'react-native-gesture-handler';
 
 
+
+
 export default class GoalsPage extends Component {
 	constructor(props) {
 		super(props)
@@ -51,24 +53,52 @@ export default class GoalsPage extends Component {
 
 		};
 	    this.get_friends=this.get_friends.bind(this)
+	    this.got_loc=this.got_loc.bind(this)	    	    
+	    this.confirm_loc=this.confirm_loc.bind(this)	    
 	    this.populate_goals=this.populate_goals.bind(this)	    
 	    this.populate_email=this.populate_email.bind(this)	    
 
 	    this.get_email=this.get_email.bind(this)
-	    this.send_goal=this.send_goal.bind(this)	    
+	    this.send_goal=this.send_goal.bind(this)
+	    this.calcCrow=this.calcCrow.bind(this)
+	    this.toRad=this.toRad.bind(this)	    
 
 	    this.requestLocationPermission=this.requestLocationPermission.bind(this)
 	    this.handleModalOpen=this.handleModalOpen.bind(this)
-		this.onRegionChange=this.onRegionChange.bind(this)
-		this.addGoalHandler=this.addGoalHandler.bind(this)
+	    this.onRegionChange=this.onRegionChange.bind(this)
+	    this.addGoalHandler=this.addGoalHandler.bind(this)
 
 
 		// this.setState(modalVisible(false))
 	}
+    async calcCrow(lat1, lon1, lat2, lon2) 
+    {
+//	console.warn('lat1', lat1)
+	var R = 6371; // km
+	var dLat = await this.toRad(lat2-lat1);
+	var dLon = await this.toRad(lon2-lon1);
+	var lat1 = await this.toRad(lat1);
+	var lat2 = await this.toRad(lat2);
+//	console.warn('dlat', dLat);
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	var d = R * c;
+//	console.warn('d', d);
+	return d;
+    }
+
+    // Converts numeric degrees to radians
+    async toRad(Value) 
+    {
+//	console.warn(Value, Math.PI)
+	return Value * Math.PI / 180;
+    }
     async send_goal(){
 	var user = firebase.auth().currentUser;
 	goal = {}
 	var title = this.state.text
+	goal['done'] = false
 	goal['utc'] = this.state.utcDate
 	goal['desc'] = this.state.desc
 	goal['lat'] = this.state.markerCoordinates.latitude
@@ -90,7 +120,31 @@ export default class GoalsPage extends Component {
 	    
 	}
 
+    async got_loc(){
+	console.warn('region', this.state.region);
+	var cur_lat = this.state.region.latitude;
+	var cur_lon = this.state.region.longitude;
+//	console.warn('goal state', this.state.goals)
+	for (var i  = 0; i < this.state.goals.length; i++){
+	    //	    var dist = cur_lat
+	    var goal = this.state.goals[i]
+//	    console.warn('goal',goal);
+	    var dist = await this.calcCrow(goal['lat'], goal['lon'], cur_lat, cur_lon)
+	    var user = firebase.auth().currentUser;
+	    if( dist < 4){
+
+		db.ref('/users/' + user.uid + '/goals/'  + goal['title']).update({
+		    done:true})
+	    }
+//	    console.warn(goal['title'], dist);
+	}
+	this.populate_goals(user.uid)
+    }
     
+    async confirm_loc(){
+	await this.requestLocationPermission();
+
+    }
     async get_email(uid){
 	var snapshot = await db.ref("users/"  + uid).once('value')
 //	console.warn('get email',snapshot.val())
@@ -136,6 +190,7 @@ export default class GoalsPage extends Component {
 	var new_goals= []
 	for (var title in goals_list){
 	    var goal = {}
+	    goal['done'] = goals_list[title]['done']	    
 	    goal['utc'] = goals_list[title]['utc']
 	    goal['lat'] = goals_list[title]['lat']	
 	    goal['lon'] = goals_list[title]['lon']    
@@ -185,7 +240,7 @@ export default class GoalsPage extends Component {
 	    );
 	    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
 		if (true) {
-		    Geolocation.getCurrentPosition(
+		    var retval = await Geolocation.getCurrentPosition(
 			(position) => {
 			    console.log(position);
 			    var newRegion = {
@@ -194,7 +249,9 @@ export default class GoalsPage extends Component {
 				latitudeDelta: 0.0922,
 				longitudeDelta: 0.0421,
 			    };
-			    this.setState({region: newRegion});
+			    this.setState({region: newRegion},this.got_loc);
+//			    console.warn('request',newRegion.latitude);
+
 			},
 			(error) => {
 			    // See error code charts below.
@@ -202,6 +259,9 @@ export default class GoalsPage extends Component {
 			},
 			{ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
 		    );
+//		    return [this.state.region.latitude, this..longitude]
+//		    console.warn('retval',retval)
+//		    return retval
 		}
 		console.log('You can use the camera');
 	    } else {
@@ -237,10 +297,14 @@ export default class GoalsPage extends Component {
 			  <Paragraph> {goal.desc}</Paragraph>
 			  <Paragraph> {'Must be near ' +goal.lat+','+goal.lon}</Paragraph>			  
 			  <Paragraph> {'Penalty for not succeeding ' +goal.amount+"USD"} </Paragraph>
+			  {goal.done &&
+			   <Paragraph> Checked in</Paragraph>
+			  }
 					</Card.Content>
 					<Card.Actions>
-					<Button></Button>
-					</Card.Actions>
+			  <Button onPress={this.confirm_loc}>Confirm Location</Button>
+			  </Card.Actions>
+			  
 			  </Card>))
 			 
 			}
