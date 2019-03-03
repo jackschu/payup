@@ -82,6 +82,9 @@ export default class Home extends Component {
       return (
 	  <View style={styles.container}>
 	      <View style={styles.container}>
+		<Button title="Profile"
+	  onPress={()=>this.props.navigation.navigate('Profile')}
+	      />
               <Button
           title="Make Customer ID"
           onPress={this.requestPayment}
