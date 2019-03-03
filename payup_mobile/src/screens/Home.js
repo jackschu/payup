@@ -14,21 +14,33 @@ export default class Home extends Component {
 	this.requestPayment=this.requestPayment.bind(this)
 	this.makeAccount=this.makeAccount.bind(this)
 	this.saveData=this.saveData.bind(this)
+
+	setInterval(()=>{
+		var user = firebase.auth().currentUser;
+		if (!user) {
+			return;
+		}
+		global.user = user.uid;
+		console.log("oof")
+		db.ref('/users/' + global.user + "/goals").once('value').then((snapshot) => {
+			let val = snapshot.val();
+			for (var key in val) {
+				if ( val[key]["utc"] - (new Date().getTime()) <= 0 && !val[key]["didRecognizeFailure"]) {
+					db.ref('/users/' + global.user + "/goals/" + key).update({didRecognizeFailure: true});
+				}
+			}
+		});
+	}, 2000)
     };
 
     async saveData(customer){
 
 	try {
 		var user = firebase.auth().currentUser;
-		global.user = user;
 	    console.warn('user loaded',user);
 	    db.ref('/users/'+ user.uid).update({
 		stripe_customer:customer.id
 		})
-		
-		db.ref('/users/' + user.uid).on('value').then(() => {
-			
-		});
 //	    await AsyncStorage.setItem('@MySuperStore:customerid', customer.id);
 	} catch (error) {
 	    console.warn("error saving", error);
