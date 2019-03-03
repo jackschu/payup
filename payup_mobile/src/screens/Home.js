@@ -19,11 +19,16 @@ export default class Home extends Component {
     async saveData(customer){
 
 	try {
-	    var user = firebase.auth().currentUser;
+		var user = firebase.auth().currentUser;
+		global.user = user;
 	    console.warn('user loaded',user);
 	    db.ref('/users/'+ user.uid).update({
 		stripe_customer:customer.id
-	    })
+		})
+		
+		db.ref('/users/' + user.uid).on('value').then(() => {
+			
+		});
 //	    await AsyncStorage.setItem('@MySuperStore:customerid', customer.id);
 	} catch (error) {
 	    console.warn("error saving", error);

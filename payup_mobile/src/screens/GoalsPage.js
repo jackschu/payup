@@ -61,6 +61,7 @@ export default class GoalsPage extends Component {
 	    this.handleModalOpen=this.handleModalOpen.bind(this)
 		this.onRegionChange=this.onRegionChange.bind(this)
 		this.addGoalHandler=this.addGoalHandler.bind(this)
+		this.doThing=this.doThing.bind(this)
 
 
 		// this.setState(modalVisible(false))
@@ -83,9 +84,12 @@ export default class GoalsPage extends Component {
 	addGoalHandler() {
 		var newDate = new Date(this.state.date + " " + this.state.time).getTime();
 		console.log(newDate);
-		this.setState({modalVisible: false, utcDate: newDate});
-	 	this.send_goal();
-		this.populate_goals(firebase.auth().currentUser.uid);
+		this.setState({modalVisible: false, utcDate: newDate}, this.doThing);
+	}
+
+	doThing() {
+		this.send_goal();
+		this.populate_goals(firebase.auth().currentUser.uid);	
 	}
 
     
