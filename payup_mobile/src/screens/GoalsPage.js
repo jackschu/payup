@@ -67,6 +67,8 @@ export default class GoalsPage extends Component {
 	goal = {}
 	var title = this.state.text	
 	goal['desc'] = this.state.desc
+	goal['lat'] = this.state.markerCoordinates.latitude
+	goal['lon'] = this.state.markerCoordinates.longitude	
 	goal['amount'] = this.state.amount	
 	console.warn('saving selected friends', this.state.selectedFriends)
 	goal['friends'] = this.state.selectedFriends.map((x)=>this.state.friendsToUID[x])
@@ -121,6 +123,8 @@ export default class GoalsPage extends Component {
 	var new_goals= []
 	for (var title in goals_list){
 	    var goal = {}
+	    goal['lat'] = goals_list[title]['lat']	
+	    goal['lon'] = goals_list[title]['lon']    
 	    goal['title'] = title
 	    goal['desc'] = goals_list[title]['desc']
 	    goal['amount'] = goals_list[title]['amount']
@@ -217,6 +221,7 @@ export default class GoalsPage extends Component {
 					<Card.Content>
 			  <Title> {goal.title} </Title>
 			  <Paragraph> {goal.desc}</Paragraph>
+			  <Paragraph> {'Must be near ' +goal.lat+','+goal.lon}</Paragraph>			  
 			  <Paragraph> {'Penalty for not succeeding ' +goal.amount+"USD"} </Paragraph>
 					</Card.Content>
 					<Card.Actions>
