@@ -18,7 +18,7 @@ handleSignUp = (email, password) => {
 	    })
 	    console.warn('loggedin', user.uid)
 	      db.ref('users/' + user.uid).update({
-		  email: fireemail
+		  email: email
 	      })
 	})    
 	.catch(function(error) {
@@ -29,7 +29,7 @@ handleSignUp = (email, password) => {
     });
     firebase.auth().signInWithEmailAndPassword(email, password)
 	.then(()=>{console.warn('signed in user', firebase.auth().currentUser)
-		   db.ref('users/' + firebase.auth().currentUser.uid).set({
+		   db.ref('users/' + firebase.auth().currentUser.uid).update({
 		       email: email
 		   })
 		  })
