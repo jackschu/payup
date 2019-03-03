@@ -13,12 +13,12 @@ handleSignUp = (email, password) => {
 	.then(()=>{
 	    var user = firebase.auth().currentUser;
 	    var fireemail = email.replace('.',',')
-	    db.ref('/emailToUid/'+fireemail).set({
+	    db.ref('/emailToUid/'+fireemail).update({
 		uid:user.uid
 	    })
 	    console.warn('loggedin', user.uid)
-	      db.ref('users/' + user.uid).set({
-		  email: fireemail
+	      db.ref('users/' + user.uid).update({
+		  email: email
 	      })
 	})    
 	.catch(function(error) {
@@ -29,7 +29,7 @@ handleSignUp = (email, password) => {
     });
     firebase.auth().signInWithEmailAndPassword(email, password)
 	.then(()=>{console.warn('signed in user', firebase.auth().currentUser)
-		   db.ref('users/' + firebase.auth().currentUser.uid).set({
+		   db.ref('users/' + firebase.auth().currentUser.uid).update({
 		       email: email
 		   })
 		  })
