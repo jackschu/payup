@@ -19,17 +19,17 @@ export default class GoalsPage extends Component {
 	}
     componentDidMount(){
 	var user = firebase.auth().currentUser;
+	var friendslist;
 	db.ref("users/"  + user.uid).once('value').then(function(snapshot){
-	    //		console.warn('value',snapshot.val())
+	    console.warn('mount value',snapshot.val())
 	    friendslist = Object.keys(snapshot.val()['friends'])
 	    console.warn('list', friendslist)
-	    this.setState({
-		
-		friends:['testing' , 'some']
+	    this.setState({		
+		friends:friendslist
 	    })
-	    console.warn('stripe boi',customer)
+	    console.warn('done');
 	
-	});
+	}.bind(this)).catch(function(error){console.warn('no friends', error)});
 
     }
     
