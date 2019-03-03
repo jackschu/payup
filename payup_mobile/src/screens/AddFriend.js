@@ -13,7 +13,7 @@ import {
 //  Alert
 } from 'react-native';
 import { db } from '../config';
-
+import Navbar from './Navbar'
 
 
 let addFriend = email => {
@@ -73,7 +73,7 @@ export default class AddFriend extends Component {
 	/>
 
 		
-		
+		<Navbar navigation={this.props.navigation} />
       </View>
     );
   }

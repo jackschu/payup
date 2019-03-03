@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { AppRegistry, View } from 'react-native';
 import { Button } from 'react-native';
 import {Alert, Text, TextInput} from 'react-native';
+import Navbar from './Navbar'
 
 handleSignUp = (email, password) => {
 //    console.warn('creating user', email, password);
@@ -52,12 +53,13 @@ export default class LoginPage extends Component {
   
   render() {
     return (
-	<View style={{padding: 10}}>
+	<View style={{height: "100%"}}>
 
         <TextInput
         style={{height: 40, borderColor: 'gray', borderWidth: 1}}
         onChangeText={(user) => this.setState({user})}
 	placeholder={'Username'}
+//        value={this.state.text}
       />
       
 	  
@@ -73,6 +75,7 @@ export default class LoginPage extends Component {
 	  
   title="Login"
 	/>
+	<Navbar navigation={this.props.navigation} />
 	    </View>
    ); 
   }
