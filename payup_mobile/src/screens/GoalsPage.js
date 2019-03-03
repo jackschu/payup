@@ -9,6 +9,7 @@ import {PermissionsAndroid} from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import DatePicker from 'react-native-datepicker'
 import Navbar from './Navbar'
+import {ToastAndroid} from 'react-native';
 
 
 import Geolocation from 'react-native-geolocation-service';
@@ -142,8 +143,10 @@ export default class GoalsPage extends Component {
 	    var user = firebase.auth().currentUser;
 	    if( dist < 4){
 
-		db.ref('/users/' + user.uid + '/goals/'  + goal['title']).update({
-		    done:true})
+			db.ref('/users/' + user.uid + '/goals/'  + goal['title']).update({
+				done:true})
+			
+			ToastAndroid.show("You have succeeded your " + goal['title'] + " goal", ToastAndroid.LONG);
 	    }
 //	    console.warn(goal['title'], dist);
 	}
