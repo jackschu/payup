@@ -27,7 +27,7 @@ let addFriend = email => {
 	friend_dict = {};
 	friend_dict[uid_friend] = true;
 //	console.warn(friend_dict);
-	db.ref('/users/' + uid + '/friends/').set(friend_dict);
+	db.ref('/users/' + uid + '/friends/').update(friend_dict);
     }).catch(function(error){console.warn('save failed, is the account valid ',error)});
 
 };

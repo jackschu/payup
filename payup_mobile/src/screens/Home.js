@@ -1,3 +1,7 @@
+import firebase from '@firebase/app'
+import '@firebase/auth'
+import '@firebase/database'
+import { db } from '../config';
 import stripe from 'tipsi-stripe'
 import React, { Component } from 'react';  
 import {AsyncStorage, Platform, StyleSheet, Text, View, Button} from 'react-native';
@@ -14,7 +18,12 @@ export default class Home extends Component {
     async saveData(customer){
 
 	try {
-	    await AsyncStorage.setItem('@MySuperStore:customerid', customer.id);
+	    var user = firebase.auth().currentUser;
+	    console.warn('user loaded',user);
+	    db.ref('/users/'+ user.uid).update({
+		stripe_customer:customer.id
+	    })
+//	    await AsyncStorage.setItem('@MySuperStore:customerid', customer.id);
 	} catch (error) {
 	    console.warn("error saving", error);
 	    // Error saving data
@@ -34,7 +43,20 @@ export default class Home extends Component {
     async handlerPayment(){
 	var value = null;
 	try {
-	    value = await AsyncStorage.getItem('customerid');
+	    var user = firebase.auth().currentUser;
+	    db.ref("users/"  + user.id).once('value').then(function(snapshot){
+		customer = snapshot.val()['stripe_customer']
+		fetch("https://api.stripe.com/v1/charges", {
+		    body: "amount=999&currency=usd&description=chargewithcustomer&customer=" + customer,
+		    headers: {
+			Authorization: "Basic c2tfdGVzdF83TDE5MUJ6ZjMxc2NtYldydUFSM2xjeng6",
+			"Content-Type": "application/x-www-form-urlencoded"
+		    },
+		    method: "POST"
+		}).then().catch(error => { console.warn('handler failed', { error });})
+	    });
+	    //value = await AsyncStorage.getItem('customerid');
+
 	    if (value !== null) {		
 		//		console.warn('got id', value);
 	    }else{
@@ -46,14 +68,7 @@ export default class Home extends Component {
 	    // Error retrieving data
 	}
 
-	fetch("https://api.stripe.com/v1/charges", {
-	    body: "amount=999&currency=usd&description=chargewithcustomer&customer=" + value,
-	    headers: {
-		Authorization: "Basic c2tfdGVzdF83TDE5MUJ6ZjMxc2NtYldydUFSM2xjeng6",
-		"Content-Type": "application/x-www-form-urlencoded"
-	    },
-	    method: "POST"
-	}).then().catch(error => { console.warn('handler failed', { error });})
+
     } 
 
 
