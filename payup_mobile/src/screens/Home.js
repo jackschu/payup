@@ -5,6 +5,7 @@ import { db } from '../config';
 import stripe from 'tipsi-stripe'
 import React, { Component } from 'react';  
 import {AsyncStorage, Platform, StyleSheet, Text, View, Button} from 'react-native';
+import Navbar from './Navbar'
 
 export default class Home extends Component {
     constructor(props){
@@ -109,6 +110,8 @@ export default class Home extends Component {
         <Text style={styles.instructions}>To get started, edit App.js</Text>
 
 	      </View>
+		  
+		  <Navbar navigation={this.props.navigation} />
 	      </View>
 /*      <View>
         <Text>Home Screen</Text>

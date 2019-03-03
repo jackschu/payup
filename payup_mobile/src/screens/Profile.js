@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { AppRegistry, View, Modal} from 'react-native';
-import {Alert, Text, TextInput, Button} from 'react-native';
+import {Alert, Text, TextInput, Button, StyleSheet} from 'react-native';
+import Navbar from './Navbar'
 
 
 export default class Profile extends Component {
@@ -12,7 +13,7 @@ export default class Profile extends Component {
 
   render() {
     return (
-	<View style={{padding: 10}}>
+	<View style={{height: "100%"}}>
 	<Text>
 	Name:
 	{'\n'}
@@ -34,7 +35,9 @@ export default class Profile extends Component {
 	<Button
   onPress={() => this.setState({modalVisible: true})}
   title="Edit information"
-	/></View>
+	/>
+		<Navbar navigation={this.props.navigation} />
+	</View>
    ); 
   }
 }
@@ -66,4 +69,17 @@ const modalStyle = {
 		marginLeft: 20
 	}
 }
+
+const styles = StyleSheet.create({
+    b1: {
+		position: 'absolute',
+		bottom:0,
+		flex: 1,
+		width: "100%",
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'stretch',
+	}
+});
+
 

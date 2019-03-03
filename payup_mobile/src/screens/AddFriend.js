@@ -13,7 +13,7 @@ import {
 //  Alert
 } from 'react-native';
 import { db } from '../config';
-
+import Navbar from './Navbar'
 
 
 let addFriend = email => {
@@ -63,7 +63,7 @@ export default class AddFriend extends Component {
           <Text style={styles.buttonText}>Add</Text>
         </TouchableHighlight>
 		
-		
+		<Navbar navigation={this.props.navigation} />
       </View>
     );
   }
@@ -72,7 +72,7 @@ export default class AddFriend extends Component {
 const styles = StyleSheet.create({  
   main: {
     flex: 1,
-    padding: 30,
+    //padding: 30,
     flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: '#6565fc'
