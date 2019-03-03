@@ -80,6 +80,9 @@ export default class Home extends Component {
 	      <Button title="Add a friend"
 	  onPress={()=>this.props.navigation.navigate('AddFriend')}
 	      />
+	      <Button title="Login"
+	  onPress={()=>this.props.navigation.navigate('LoginPage')}
+	      />
 	      </View>
 	      
       <View style={styles.container}>

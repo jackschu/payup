@@ -13,13 +13,15 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 
 import AddFriend from './src/screens/AddFriend';
 import Home from './src/screens/Home';
+import LoginPage from './src/screens/LoginPage';
+
 import stripe from 'tipsi-stripe';
 //import List from './src/screens/List';
 const AppNavigator = createStackNavigator(
  {
-    Home,
+     Home,
      AddFriend,
-//    List
+     LoginPage,
   },
   {
     initialRouteName: 'Home'

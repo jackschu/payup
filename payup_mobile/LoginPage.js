@@ -32,8 +32,8 @@ export default class LoginPage extends Component {
     Alert.alert('You tapped the button!');
   }}
   title="Login"
-/>
-	  </View>
+	/>
+	    </View>
    ); 
   }
 }

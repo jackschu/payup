@@ -13,34 +13,23 @@ import {
 } from 'react-native';
 import { db } from '../config';
 
-handleSignUp = (email, password) => {
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-	// Handle Errors here.
-	var errorCode = error.code;
-	var errorMessage = error.message;
-	console.warn("error creating user", errorMessage)
-    });
-/*    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-	// Handle Errors here.
-	var errorCode = error.code;
-	var errorMessage = error.message;
-	console.warn("error signign user", errorMessage)
-    });*/
-    var user = firebase.auth().currentUser;
-    var fireemail = email.replace('.',',')
-    db.ref('/emailToUid/'+fireemail).set({
-	uid:user.uid
-    })
-}
+
 
 let addFriend = email => {
     var fireemail = email.replace('.',',')
     var uid  = firebase.auth().currentUser.uid;
-    var uid_friend  = db.ref("emailToUid/").once(fireemail)
-    friend_dict = {};
-    friend_dict[uid_friend] = true;
-    console.warn(friend_dict);
-  db.ref('/users/' + uid + '/friends/').set(friend_dict);
+    var uid_friend;
+    db.ref("emailToUid/").once('value').then(function(snapshot) {
+	uid_friend = snapshot.val()[fireemail]['uid']
+//	console.warn('snapuid',fireemail, uid_friend);
+
+//	console.warn('uid',uid_friend);
+	friend_dict = {};
+	friend_dict[uid_friend] = true;
+//	console.warn(friend_dict);
+	db.ref('/users/' + uid + '/friends/').set(friend_dict);
+    }).catch(function(error){console.warn('save failed, is the account valid ',error)});
+
 };
 
 export default class AddFriend extends Component {  
@@ -55,7 +44,7 @@ export default class AddFriend extends Component {
   };
   handleSubmit = () => {
       addFriend(this.state.name);
-//      handleSignUp('hm6ex@virginia.edu', 'hunter2');
+
       console.warn('Item saved successfully');
   };
 
