@@ -57,7 +57,7 @@ export default class AddFriend extends Component {
     render() {
 
     return (
-      <View style={styles.main}>
+      <View style={{height: "100%"}}>
 
             <TextInput
         style={{height: 40, borderColor: 'gray', borderWidth: 1}}

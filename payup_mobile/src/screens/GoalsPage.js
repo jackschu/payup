@@ -8,6 +8,7 @@ import { Avatar, Button, Card, Title, Paragraph, FAB, Portal, Text, TextInput, C
 import {PermissionsAndroid} from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import DatePicker from 'react-native-datepicker'
+import Navbar from './Navbar'
 
 
 import Geolocation from 'react-native-geolocation-service';
@@ -361,6 +362,7 @@ export default class GoalsPage extends Component {
 		    icon="add"
 		    onPress={this.handleModalOpen}
 			/>
+			<Navbar navigation={this.props.navigation} />
 			</View>
 		);
     }
