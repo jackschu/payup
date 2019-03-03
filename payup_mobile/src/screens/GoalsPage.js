@@ -5,24 +5,41 @@ import { db } from '../config';
 import React, {Component} from 'react';
 import {StyleSheet, View, Modal} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, FAB, Portal, Text, TextInput, Chip} from 'react-native-paper';
+import {PermissionsAndroid} from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-function getUser(currentID, currentValue) {
-    return firebase.database().ref('/users/' + currentID).once('value').then(function(child) {
-        console.log("The current ID is: "+currentID+" and the current value is: "+currentValue);
-    });
-}
+import Geolocation from 'react-native-geolocation-service';
 
 export default class GoalsPage extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			modalVisible: false,
+			innerModalVisible: false,
 			friends: ["Hunter", "Spencer", "Jack"],
-			selectedFriends: []
+			selectedFriends: [],
+			markerChosen: false,
+			position: {
+				latitude: 0,
+				longitude: 0
+			},
+			markerCoordinates: {
+				latitude: 0,
+				longitude: 0
+			},
+			region: {
+				latitude: 0,
+				longitude: 0,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421,
+			}
 		};
 	    this.get_friends=this.get_friends.bind(this)
 	    this.populate_email=this.populate_email.bind(this)	    
-	    this.get_email=this.get_email.bind(this)
+			this.get_email=this.get_email.bind(this)
+			this.requestLocationPermission=this.requestLocationPermission.bind(this)
+			this.handleModalOpen=this.handleModalOpen.bind(this)
+			this.onRegionChange=this.onRegionChange.bind(this)
 
 		// this.setState(modalVisible(false))
 	}
@@ -65,7 +82,59 @@ export default class GoalsPage extends Component {
 	this.populate_email(user.uid)
 
 
-    }
+		}
+		
+		async requestLocationPermission() {
+			try {
+				const granted = await PermissionsAndroid.request(
+				PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+				{
+					title: 'Cool Photo App Camera Permission',
+					message:
+					'Cool Photo App needs access to your camera ' +
+					'so you can take awesome pictures.',
+					buttonNeutral: 'Ask Me Later',
+					buttonNegative: 'Cancel',
+					buttonPositive: 'OK',
+				},
+				);
+				if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+				if (true) {
+					Geolocation.getCurrentPosition(
+						(position) => {
+							console.log(position);
+							var newRegion = {
+								latitude: position.coords.latitude || 0,
+								longitude: position.coords.longitude || 0,
+								latitudeDelta: 0.0922,
+								longitudeDelta: 0.0421,
+							};
+							this.setState({region: newRegion});
+						},
+						(error) => {
+							// See error code charts below.
+							console.log(error.code, error.message);
+						},
+						{ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+					);
+				}
+				console.log('You can use the camera');
+				} else {
+				console.log('Camera permission denied');
+				}
+			} catch (err) {
+				console.warn(err);
+			}
+		}
+
+		onRegionChange(newregion) {
+			this.setState({ region:newregion });
+		}
+
+		handleModalOpen() {
+			this.requestLocationPermission();
+			this.setState({modalVisible: true});
+		}
     
     render() {
 		return (
@@ -73,7 +142,7 @@ export default class GoalsPage extends Component {
 				  <FAB
 					style={fabStyles.fab}
 					icon="add"
-					onPress={() => this.setState({modalVisible: true})}
+					onPress={this.handleModalOpen}
 					/>
 				<Card style={cardStyle.cardStyle}>
 					<Card.Title title="Jane Doe" subtitle="Charity" left={(props) => <Avatar.Icon {...props} icon="account-circle" />} />
@@ -133,6 +202,28 @@ export default class GoalsPage extends Component {
 						onChangeText={desc => this.setState({ desc })}
 					/>
 
+					<Button mode="contained" onPress={()=>{this.setState({innerModalVisible: true})}}>
+							Show Map
+					</Button>
+
+					<Modal animated={true} visible={this.state.innerModalVisible} onRequestClose={() => this.setState({ innerModalVisible: false })}>
+					<MapView
+						provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+						style={mapStyles.map}
+						onPress={(f)=>{console.log(this.state.region); this.setState({markerChosen: true, markerCoordinates: f.nativeEvent.coordinate})}}
+						region={this.state.region}
+						// onRegionChange={this.onRegionChange}
+					>
+					<Marker coordinate={this.state.markerCoordinates}/>
+					</MapView>
+					<Button disabled={!this.state.markerChosen} mode="contained" onPress={()=>{this.setState({innerModalVisible: false})}}>
+							Choose Location
+					</Button>
+					<Button mode="contained" onPress={()=>{this.setState({innerModalVisible: false})}}>
+							Cancel
+					</Button>
+					</Modal>
+
 					<Button icon="add-a-photo" mode="contained" onPress={() => this.setState({modalVisible: false})}>
 						Press me
 					</Button>
@@ -183,3 +274,16 @@ const fabStyles = StyleSheet.create({
 		bottom: 0,
 	},
 })
+
+const mapStyles = StyleSheet.create({
+	container: {
+		...StyleSheet.absoluteFillObject,
+		height: 400,
+		width: 400,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+	},
+	map: {
+		...StyleSheet.absoluteFillObject,
+	},
+ });
