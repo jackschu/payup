@@ -1,6 +1,7 @@
 import firebase from '@firebase/app'
 import '@firebase/auth'
 import '@firebase/database'
+import { Button } from 'react-native';
 
 import React, { Component } from 'react';  
 import {  
@@ -28,7 +29,7 @@ let addFriend = email => {
 	friend_dict[uid_friend] = true;
 //	console.warn(friend_dict);
 	db.ref('/users/' + uid + '/friends/').update(friend_dict);
-    }).catch(function(error){console.warn('save failed, is the account valid ',error)});
+    }).catch(function(error){console.warn('save failed, is the account valid ', error)});
 
 };
 
@@ -61,6 +62,8 @@ export default class AddFriend extends Component {
         >
           <Text style={styles.buttonText}>Add</Text>
         </TouchableHighlight>
+		
+		
       </View>
     );
   }

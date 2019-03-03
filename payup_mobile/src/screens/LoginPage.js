@@ -58,7 +58,6 @@ export default class LoginPage extends Component {
         style={{height: 40, borderColor: 'gray', borderWidth: 1}}
         onChangeText={(user) => this.setState({user})}
 	placeholder={'Username'}
-//        value={this.state.text}
       />
       
 	  
