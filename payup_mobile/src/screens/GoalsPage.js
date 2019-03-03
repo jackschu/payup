@@ -67,7 +67,8 @@ export default class GoalsPage extends Component {
     async send_goal(){
 	var user = firebase.auth().currentUser;
 	goal = {}
-	var title = this.state.text	
+	var title = this.state.text
+	goal['utc'] = this.state.utcDate
 	goal['desc'] = this.state.desc
 	goal['lat'] = this.state.markerCoordinates.latitude
 	goal['lon'] = this.state.markerCoordinates.longitude	
@@ -84,7 +85,8 @@ export default class GoalsPage extends Component {
 		console.log(newDate);
 		this.setState({modalVisible: false, utcDate: newDate});
 	 	this.send_goal();
-		this.populate_goals(firebase.auth().currentUser.uid);
+	    this.populate_goals(firebase.auth().currentUser.uid);
+	    
 	}
 
     
@@ -133,6 +135,7 @@ export default class GoalsPage extends Component {
 	var new_goals= []
 	for (var title in goals_list){
 	    var goal = {}
+	    goal['utc'] = goals_list[title]['utc']
 	    goal['lat'] = goals_list[title]['lat']	
 	    goal['lon'] = goals_list[title]['lon']    
 	    goal['title'] = title
