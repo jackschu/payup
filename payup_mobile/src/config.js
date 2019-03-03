@@ -1,11 +1,13 @@
-
+console.warn('run')
 import firebase from '@firebase/app'
 import '@firebase/auth'
 import '@firebase/database'
-
-
+import * as REACT_APP_API_KEY from '../key'
+console.warn(REACT_APP_API_KEY)
 let config = {
-    apiKey: "AIzaSyB21-8EjVpwPdfNOtX3B9W8mv9S2zuGvRQ",
+
+    apiKey: REACT_APP_API_KEY['G_KEY'],
+//    apiKey:"AIzaSyB21-8EjVpwPdfNOtX3B9W8mv9S2zuGvRQ",
     authDomain: "payup-77032.firebaseapp.com",
     databaseURL: "https://payup-77032.firebaseio.com",
     projectId: "payup-77032",
@@ -14,5 +16,5 @@ let config = {
 };
 
 let app = firebase.initializeApp(config);
-console.warn(app);
+
 export const db = app.database();  
