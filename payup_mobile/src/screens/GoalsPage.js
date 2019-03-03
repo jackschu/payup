@@ -61,6 +61,7 @@ export default class GoalsPage extends Component {
 	    this.handleModalOpen=this.handleModalOpen.bind(this)
 		this.onRegionChange=this.onRegionChange.bind(this)
 		this.addGoalHandler=this.addGoalHandler.bind(this)
+		this.doThing=this.doThing.bind(this)
 
 
 		// this.setState(modalVisible(false))
@@ -84,13 +85,14 @@ export default class GoalsPage extends Component {
 	addGoalHandler() {
 		var newDate = new Date(this.state.date + " " + this.state.time).getTime();
 		console.log(newDate);
-		this.setState({modalVisible: false, utcDate: newDate});
-	 	this.send_goal();
-	    this.populate_goals(firebase.auth().currentUser.uid);
-	    
+		this.setState({modalVisible: false, utcDate: newDate}, this.doThing);
 	}
 
-    
+	doThing() {
+		this.send_goal();
+	    this.populate_goals(firebase.auth().currentUser.uid);
+	}
+
     async get_email(uid){
 	var snapshot = await db.ref("users/"  + uid).once('value')
 //	console.warn('get email',snapshot.val())
@@ -303,8 +305,8 @@ export default class GoalsPage extends Component {
 							mode="date"
 							placeholder="select date"
 							format="YYYY-MM-DD"
-							minDate="2018-03-03"
-							maxDate="2018-12-31"
+							minDate="2019-03-03"
+							maxDate="2019-12-31"
 							confirmBtnText="Confirm"
 							cancelBtnText="Cancel"
 							onDateChange={(date) => {this.setState({date: date})}}
