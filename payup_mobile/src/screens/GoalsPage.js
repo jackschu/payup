@@ -340,7 +340,7 @@ export default class GoalsPage extends Component {
 			<FAB
 		    style={fabStyles.fab}
 		    icon="add"
-		    onPress={() => this.setState({modalVisible: true})}
+		    onPress={this.handleModalOpen}
 			/>
 			</View>
 		);
