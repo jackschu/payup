@@ -15,6 +15,7 @@ import AddFriend from './src/screens/AddFriend';
 import Home from './src/screens/Home';
 import LoginPage from './src/screens/LoginPage';
 import GoalsPage from './src/screens/GoalsPage';
+import FriendsList from './src/screens/FriendsList';
 import Profile from './src/screens/Profile';
 import stripe from 'tipsi-stripe';
 //import List from './src/screens/List';
@@ -24,7 +25,8 @@ const AppNavigator = createStackNavigator(
      AddFriend,
      LoginPage,
 	 GoalsPage,
-	 Profile
+     Profile,
+     FriendsList,
   },
   {
     initialRouteName: 'Home'
