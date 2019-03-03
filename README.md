@@ -1,2 +1,2 @@
-# payup
-A financially motivated alarm clock
+# PayUp
+The Next Step in Accountability Technology
