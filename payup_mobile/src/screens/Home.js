@@ -97,8 +97,8 @@ export default class Home extends Component {
 		  <Button title="My Goals"
 	      onPress={()=>this.props.navigation.navigate('GoalsPage')}
 	      />
-	      <Button title="Add a friend"
-	  onPress={()=>this.props.navigation.navigate('AddFriend')}
+	      <Button title="FriendsList"
+	  onPress={()=>this.props.navigation.navigate('FriendsList')}
 	      />
 	      <Button title="Login"
 	  onPress={()=>this.props.navigation.navigate('LoginPage')}

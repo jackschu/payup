@@ -1,3 +1,7 @@
+import firebase from '@firebase/app'
+import '@firebase/auth'
+import '@firebase/database'
+import { db } from '../config';
 import React, { Component } from 'react';
 import { AppRegistry, View, Modal} from 'react-native';
 import {Alert, Text, TextInput, Button, StyleSheet} from 'react-native';
@@ -8,10 +12,39 @@ export default class Profile extends Component {
 
  constructor(props) {
     super(props);
-    this.state = {modalVisible: false, first : "", last : ""};
-  }
+     this.state = {modalVisible: false, first : "", last : ""};
+     this.send_name=this.send_name.bind(this)
+     this.get_name=this.get_name.bind(this)     
+ }
+    async get_name(){
+	var user=  firebase.auth().currentUser;
+	var snapshot = await db.ref("users/"  + user.uid).once('value')
+	var val = snapshot.val()
+	var first_name, last_name;
+	try{
+	    first_name = val['first_name']
+	    last_name = val['last_name']
+	} catch (e) {
+	    console.warn('setting state first time');
+	} 
+	    
+	this.setState({
+	    first:first_name,
+	    last:last_name
+	})
 
-  render() {
+    }
+    componentDidMount(){
+	this.get_name()
+    }
+    async send_name(){
+	var user=  firebase.auth().currentUser;
+	db.ref('/users/'+ user.uid).update({
+	    first_name:this.state.first,
+	    last_name:this.state.last,	    
+	})
+    }
+    render() {
     return (
 	<View style={{height: "100%"}}>
 	<Text>
@@ -30,7 +63,7 @@ export default class Profile extends Component {
         onChangeText={(last) => this.setState({last})}
 	placeholder={'Last name'}
       />
-	<Button onPress={() => this.setState({modalVisible: false})} title="Update"/>
+	    <Button onPress={() => {this.setState({modalVisible: false}); this.send_name()}} title="Update"/>
 	</Modal>
 	<Button
   onPress={() => this.setState({modalVisible: true})}
