@@ -28,14 +28,14 @@ export default class GoalsPage extends Component {
 	}
     async get_email(uid){
 	var snapshot = await db.ref("users/"  + uid).once('value')
-	console.warn('get email',snapshot.val())
-	return snapshot.val()['email']
+//	console.warn('get email',snapshot.val())
+	return snapshot.val()['first_name']+" "+snapshot.val()['last_name']
     }
     async get_friends(uid){
 	var firendslist
 	var snapshot = await db.ref("users/"  + uid+"/friends/").once('value')
 	var val = snapshot.val()
-	console.warn('get friends',val)
+//	console.warn('get friends',val)
 	try{
 	    friendslist = Object.keys(val)
 	}catch(e){
@@ -51,7 +51,7 @@ export default class GoalsPage extends Component {
     }
 
     async populate_email(uid){
-//	var emaillist =  await this.get_friends(uid)
+	var emaillist =  await this.get_friends(uid)
 //	console.warn(emaillist)
 	this.setState({
 	    friends:emaillist
