@@ -90,6 +90,17 @@ export default class GoalsPage extends Component {
 							}> {friend} </Chip>
 						))}
 					</View>
+					<Text style={modalStyle.goalTitleLabel}> Payment per Friend </Text>
+					<TextInput
+						style={modalStyle.goalTitleInput}
+						label='payment amount (dollars)'
+						value={this.state.desc}
+						onChangeText={desc => this.setState({ desc })}
+					/>
+
+					<Button icon="add-a-photo" mode="contained" onPress={() => this.setState({modalVisible: false})}>
+						Press me
+					</Button>
 				</Modal>
 			</View>
 		);
