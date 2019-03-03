@@ -6,6 +6,7 @@ import stripe from 'tipsi-stripe'
 import React, { Component } from 'react';  
 import {AsyncStorage, Platform, StyleSheet, Text, View, Button} from 'react-native';
 import Navbar from './Navbar'
+import {ToastAndroid} from 'react-native';
 
 export default class Home extends Component {
     constructor(props){
@@ -26,6 +27,7 @@ export default class Home extends Component {
 			let val = snapshot.val();
 			for (var key in val) {
 				if ( val[key]["utc"] - (new Date().getTime()) <= 0 && !val[key]["didRecognizeFailure"]) {
+					ToastAndroid.show("You have failed your " + key + " goal", ToastAndroid.LONG);
 					db.ref('/users/' + global.user + "/goals/" + key).update({didRecognizeFailure: true});
 				}
 			}
