@@ -1,3 +1,7 @@
+import firebase from '@firebase/app'
+import '@firebase/auth'
+import '@firebase/database'
+
 import React, { Component } from 'react';  
 import {  
   View,
@@ -9,10 +13,34 @@ import {
 } from 'react-native';
 import { db } from '../config';
 
-let addFriend = item => {  
-  db.ref('/items').push({
-    name: item
-  });
+handleSignUp = (email, password) => {
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+	// Handle Errors here.
+	var errorCode = error.code;
+	var errorMessage = error.message;
+	console.warn("error creating user", errorMessage)
+    });
+/*    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+	// Handle Errors here.
+	var errorCode = error.code;
+	var errorMessage = error.message;
+	console.warn("error signign user", errorMessage)
+    });*/
+    var user = firebase.auth().currentUser;
+    var fireemail = email.replace('.',',')
+    db.ref('/emailToUid/'+fireemail).set({
+	uid:user.uid
+    })
+}
+
+let addFriend = email => {
+    var fireemail = email.replace('.',',')
+    var uid  = firebase.auth().currentUser.uid;
+    var uid_friend  = db.ref("emailToUid/").once(fireemail)
+    friend_dict = {};
+    friend_dict[uid_friend] = true;
+    console.warn(friend_dict);
+  db.ref('/users/' + uid + '/friends/').set(friend_dict);
 };
 
 export default class AddFriend extends Component {  
@@ -26,7 +54,8 @@ export default class AddFriend extends Component {
     });
   };
   handleSubmit = () => {
-    addFriend(this.state.name);
+      addFriend(this.state.name);
+//      handleSignUp('hm6ex@virginia.edu', 'hunter2');
       console.warn('Item saved successfully');
   };
 
