@@ -9,23 +9,31 @@ import {Alert, Text, TextInput} from 'react-native';
 
 handleSignUp = (email, password) => {
 //    console.warn('creating user', email, password);
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+	.then(()=>{
+	    var user = firebase.auth().currentUser;
+	    var fireemail = email.replace('.',',')
+	    db.ref('/emailToUid/'+fireemail).set({
+		uid:user.uid
+	    })
+	    console.warn('loggedin', user.uid)}
+	     )
+    
+	.catch(function(error) {
 	// Handle Errors here.
 	var errorCode = error.code;
 	var errorMessage = error.message;
 	console.warn("error creating user", errorMessage)
-    }).then(()=>{
-	var user = firebase.auth().currentUser;
-    var fireemail = email.replace('.',',')
-    db.ref('/emailToUid/'+fireemail).set({
-	uid:user.uid
-    })});
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+    });
+    firebase.auth().signInWithEmailAndPassword(email, password)
+	.then(()=>{console.warn('signed in user', firebase.auth().currentUser)})
+	.catch(function(error) {
 	// Handle Errors here.
 	var errorCode = error.code;
 	var errorMessage = error.message;
 	console.warn("error signign user", errorMessage)
-    }).then(()=>{console.warn('signed in user', firebase.auth().currentUser)});
+	});
+
 
 }
 
