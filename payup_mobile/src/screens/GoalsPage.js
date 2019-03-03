@@ -5,6 +5,13 @@ import { db } from '../config';
 import React, {Component} from 'react';
 import {StyleSheet, View, Modal} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, FAB, Portal, Text, TextInput, Chip} from 'react-native-paper';
+import {PermissionsAndroid} from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import DatePicker from 'react-native-datepicker'
+
+
+import Geolocation from 'react-native-geolocation-service';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export default class GoalsPage extends Component {
@@ -12,6 +19,7 @@ export default class GoalsPage extends Component {
 		super(props)
 		this.state = {
 			modalVisible: false,
+
 		    friends: ["Hunter", "Spencer", "Jack"],
 		    friendsToUID:{},
 		    goals:[{'title':'Haha'}],
@@ -19,12 +27,38 @@ export default class GoalsPage extends Component {
 		    title:'',
 		    desc:'',
 		    amount:'',
+
+			innerModalVisible: false,
+			markerChosen: false,
+			position: {
+				latitude: 0,
+				longitude: 0
+			},
+			markerCoordinates: {
+				latitude: 0,
+				longitude: 0
+			},
+			region: {
+				latitude: 0,
+				longitude: 0,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421,
+			},
+		    date: "2019-03-03",
+		    time: new Date().toString().substr(16,5)
+
 		};
 	    this.get_friends=this.get_friends.bind(this)
 	    this.populate_goals=this.populate_goals.bind(this)	    
 	    this.populate_email=this.populate_email.bind(this)	    
+
 	    this.get_email=this.get_email.bind(this)
 	    this.send_goal=this.send_goal.bind(this)	    
+
+	    this.requestLocationPermission=this.requestLocationPermission.bind(this)
+	    this.handleModalOpen=this.handleModalOpen.bind(this)
+	    this.onRegionChange=this.onRegionChange.bind(this)
+
 
 		// this.setState(modalVisible(false))
 	}
@@ -108,18 +142,78 @@ export default class GoalsPage extends Component {
 	var friendslist;
 //	console.warn('goal uid',user.uid)
 	this.populate_email(user.uid)
+
 	this.populate_goals(user.uid)
 	
     }
+
+
+
+
+		
+    async requestLocationPermission() {
+	try {
+	    const granted = await PermissionsAndroid.request(
+		PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+		{
+		    title: 'Cool Photo App Camera Permission',
+		    message:
+		    'Cool Photo App needs access to your camera ' +
+			'so you can take awesome pictures.',
+		    buttonNeutral: 'Ask Me Later',
+		    buttonNegative: 'Cancel',
+		    buttonPositive: 'OK',
+		},
+	    );
+	    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+		if (true) {
+		    Geolocation.getCurrentPosition(
+			(position) => {
+			    console.log(position);
+			    var newRegion = {
+				latitude: position.coords.latitude || 0,
+				longitude: position.coords.longitude || 0,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421,
+			    };
+			    this.setState({region: newRegion});
+			},
+			(error) => {
+			    // See error code charts below.
+			    console.log(error.code, error.message);
+			},
+			{ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+		    );
+		}
+		console.log('You can use the camera');
+	    } else {
+		console.log('Camera permission denied');
+	    }
+	} catch (err) {
+	    console.warn(err);
+	}
+    }
+
+    onRegionChange(newregion) {
+	this.setState({ region:newregion });
+    }
+
+    handleModalOpen() {
+	this.requestLocationPermission();
+	this.setState({modalVisible: true});
+    }
+
     
     render() {
 	
 		return (
 			<View style={{flex: 1}}>
 
+
 			{this.state.goals.map((goal)=>
 			 (<Card style={cardStyle.cardStyle}>
 			  <Card.Title title={goal.title} subtitle={'Betting ' +goal.amount+ 'USD against '+ goal.friends} left={(props) => <Avatar.Icon {...props} icon="account-circle" />} />
+
 					<Card.Content>
 			  <Title> {goal.title} </Title>
 			  <Paragraph> {goal.desc}</Paragraph>
@@ -131,6 +225,7 @@ export default class GoalsPage extends Component {
 			  </Card>))
 			}
 				<Modal style={modalStyle.parent} animated={true} visible={this.state.modalVisible} onRequestClose={() => this.setState({ modalVisible: false })}>
+					<ScrollView>
 					<Text style={modalStyle.title}> New Goal </Text>
 					<Text style={modalStyle.goalTitleLabel}> Goal Title </Text>
 					<TextInput
@@ -177,10 +272,70 @@ export default class GoalsPage extends Component {
 						onChangeText={amount => this.setState({ amount })}
 					/>
 
-			<Button icon="save" mode="contained" onPress={() => {this.setState({modalVisible: false}); this.send_goal()
-									     ;this.populate_goals(firebase.auth().currentUser.uid)}}>
-						Press me
+
+
+					<Text style={modalStyle.goalTitleLabel}> Goal Deadline </Text>
+					<View style={modalStyle.dateTimePicker}>
+						<DatePicker
+							style={{width: 200, marginBottom: 10}}
+							date={this.state.date}
+							mode="date"
+							placeholder="select date"
+							format="YYYY-MM-DD"
+							minDate="2018-03-03"
+							maxDate="2018-12-31"
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							onDateChange={(date) => {this.setState({date: date})}}
+						/>
+
+						<DatePicker
+							style={{width: 200, marginBottom: 10}}
+							date={this.state.time}
+							mode="time"
+							format="HH:mm"
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							minuteInterval={1}
+							onDateChange={(time) => {this.setState({time: time});}}
+						/>
+					</View>
+
+					<View style={{width: "75%", marginLeft: 40, marginTop: 10}}>
+						<Button mode="contained" onPress={()=>{this.setState({innerModalVisible: true})}}>
+								Choose Goal Location
+						</Button>
+					</View>
+					<Modal animated={true} visible={this.state.innerModalVisible} onRequestClose={() => this.setState({ innerModalVisible: false })}>
+					<MapView
+						provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+						style={mapStyles.map}
+						onPress={(f)=>{console.log(this.state.region); this.setState({markerChosen: true, markerCoordinates: f.nativeEvent.coordinate})}}
+						region={this.state.region}
+						// onRegionChange={this.onRegionChange}
+					>
+					<Marker coordinate={this.state.markerCoordinates}/>
+					</MapView>
+					<Button disabled={!this.state.markerChosen} mode="contained" onPress={()=>{this.setState({innerModalVisible: false})}}>
+							Choose Location
+
 					</Button>
+					<Button mode="contained" onPress={()=>{this.setState({innerModalVisible: false})}}>
+							Cancel
+					</Button>
+					</Modal>
+
+					<View style={{width: "75%", marginLeft: 40, marginTop: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+								  <Button mode="contained" onPress={() => {this.setState({modalVisible: false}); this.send_goal()
+													   ;this.populate_goals(firebase.auth().currentUser.uid)}}>
+							Add Goal
+						</Button>
+
+						<Button mode="contained" onPress={() => this.setState({modalVisible: false})}>
+							Cancel
+						</Button>
+					</View>
+					</ScrollView>
 				</Modal>
 			<FAB
 		    style={fabStyles.fab}
@@ -219,9 +374,12 @@ const modalStyle = {
 		marginBottom: 5,
 	},
 	chipStyle: {
-		width: 100,
+		width: 250,
 		margin: 3,
 		marginLeft: 20
+	},
+	dateTimePicker: {
+		marginLeft: 40
 	}
 }
 
@@ -233,3 +391,16 @@ const fabStyles = StyleSheet.create({
 		bottom: 0,
 	},
 })
+
+const mapStyles = StyleSheet.create({
+	container: {
+		...StyleSheet.absoluteFillObject,
+		height: 400,
+		width: 400,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+	},
+	map: {
+		...StyleSheet.absoluteFillObject,
+	},
+ });
